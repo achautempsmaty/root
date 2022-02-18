@@ -1,0 +1,15 @@
+{
+  "name": "script-webp-root",
+  "version": "1.0.0",
+  "description": "Script pour le root photo",
+  "main": "index.js",
+  "type" : "module",
+  "scripts": {
+    "start" : "node index.js"
+  },
+  "author": "Alex Chautemps",
+  "license": "ISC",
+  "dependencies": {
+    "sharp": "^0.30.1"
+  }
+}
