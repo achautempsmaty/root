@@ -3,7 +3,6 @@ import path from 'path';
 import sharp from 'sharp';
 
 import { rootPath } from './options.js';
-
 const directoryPath = path.resolve(rootPath);
 
 const logPercent = (i, length, isConvert) => {
@@ -20,12 +19,16 @@ const logPercent = (i, length, isConvert) => {
 let informations = {
   errors: [],
   numberFile: 0,
+  temporary: 0,
 };
 
 const filesToProcess = [];
 
 function endScript() {
   console.log('Nombre de fichiers convertis : ' + informations.numberFile);
+  console.log(
+    'Nombre de Dossier Temporary supprimés : ' + informations.temporary
+  );
   if (informations.errors.length > 0) {
     let label = informations.errors.length === 1 ? 'erreur' : 'erreurs';
     console.log(
@@ -40,7 +43,9 @@ function endScript() {
 const processImage = async (file) => {
   return new Promise((resolve, reject) => {
     sharp(file.jpg)
-      .toFormat('webp')
+      .webp({
+        quality: 80,
+      })
       .toFile(file.webp)
       .then((result) => resolve(result))
       .catch((err) => reject(err));
@@ -54,10 +59,16 @@ function getFiles(directory) {
     if (fs.statSync(pathname).isDirectory() && file !== 'temporary') {
       logPercent(index, filesInDirectory.length, false);
       getFiles(pathname);
+    } else if (fs.statSync(pathname).isDirectory() && file == 'temporary') {
+      this.informations = {
+        ...this.informations,
+        temporary: this.informations.temporary + 1,
+      };
+      fs.rmSync(pathname, { recursive: true, force: true });
     } else {
-      if (path.extname(pathname) === '.jpg') {
+      if (path.extname(pathname).toLowerCase() == '.jpg') {
         const jpg = pathname;
-        const webp = jpg.replace('jpg', 'webp');
+        const webp = jpg.replace('jpg', 'webp').replace('JPG', 'webp');
         if (!fs.existsSync(webp)) {
           filesToProcess.push({ jpg, webp });
         }
