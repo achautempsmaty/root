@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
 
-import { rootPath } from './options.js';
+import { rootPath, webpQuality } from './options.js';
 const directoryPath = path.resolve(rootPath);
 
 const logPercent = (i, length, isConvert) => {
@@ -44,7 +44,7 @@ const processImage = async (file) => {
   return new Promise((resolve, reject) => {
     sharp(file.jpg)
       .webp({
-        quality: 80,
+        quality: webpQuality,
       })
       .toFile(file.webp)
       .then((result) => resolve(result))
